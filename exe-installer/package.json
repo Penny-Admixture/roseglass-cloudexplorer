@@ -1,0 +1,11 @@
+{
+  "name": "roseglass-installer",
+  "version": "1.0.0",
+  "description": "RoseGlass CloudExplorer Installer",
+  "main": "installer.js",
+  "bin": "installer.js",
+  "pkg": {
+    "targets": ["node18-win-x64"],
+    "outputPath": "dist"
+  }
+}
