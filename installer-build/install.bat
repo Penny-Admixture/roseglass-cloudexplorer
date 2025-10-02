@@ -1,0 +1,27 @@
+@echo off 
+echo Installing RoseGlass CloudExplorer... 
+echo. 
+ 
+REM Create installation directory 
+set "INSTALL_DIR=C:\Program Files\RoseGlass\CloudExplorer" 
+if not exist "" mkdir "" 
+ 
+REM Copy files 
+echo Copying application files... 
+xcopy /E /I /Y "client" "\client\" 
+xcopy /E /I /Y "services" "\services\" 
+xcopy /E /I /Y "rclone" "\rclone\" 
+copy /Y "server.js" "\" 
+copy /Y "package.json" "\" 
+ 
+REM Create shortcuts 
+echo Creating shortcuts... 
+powershell -Command "$WshShell = New-Object -comObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('C:\Users\llm_development\Desktop\RoseGlass CloudExplorer.lnk'); $Shortcut.TargetPath = 'node'; $Shortcut.Arguments = 'server.js'; $Shortcut.WorkingDirectory = ''; $Shortcut.Save()" 
+ 
+REM Add to PATH 
+echo Adding to system PATH... 
+powershell -Command "[Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';\rclone', 'Machine')" 
+ 
+echo Installation completed! 
+echo You can now run RoseGlass CloudExplorer from the Desktop shortcut. 
+pause 
