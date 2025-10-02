@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  
+  <Product Id="*" 
+           Name="RoseGlass CloudExplorer" 
+           Language="1033" 
+           Version="1.0.0.0" 
+           Manufacturer="RoseGlass" 
+           UpgradeCode="PUT-GUID-HERE">
+    
+    <Package InstallerVersion="200" 
+             Compressed="yes" 
+             InstallScope="perMachine"
+             Description="RoseGlass CloudExplorer - A robust Google Drive client"
+             Comments="RoseGlass CloudExplorer with integrated Rclone"
+             Manufacturer="RoseGlass" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Features -->
+    <Feature Id="ProductFeature" Title="RoseGlass CloudExplorer" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="RcloneComponent" />
+      <ComponentRef Id="DesktopShortcut" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+
+    <!-- UI -->
+    <UIRef Id="WixUI_Minimal" />
+    <WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
+
+    <!-- Properties -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch RoseGlass CloudExplorer" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXPROPERTY" Value="LAUNCHAPP" />
+
+    <!-- Custom Actions -->
+    <CustomAction Id="LaunchApp" 
+                  FileKey="RoseGlassCloudExplorer.exe" 
+                  ExeCommand="" 
+                  Return="asyncNoWait" 
+                  Impersonate="no" />
+
+    <!-- Install Actions -->
+    <InstallExecuteSequence>
+      <Custom Action="LaunchApp" After="InstallFinalize">LAUNCHAPP = 1</Custom>
+    </InstallExecuteSequence>
+  </Product>
+
+  <!-- Directory Structure -->
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="RoseGlassFolder" Name="RoseGlass">
+          <Directory Id="INSTALLFOLDER" Name="CloudExplorer">
+            <Directory Id="RcloneFolder" Name="rclone" />
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ProgramMenuDir" Name="RoseGlass CloudExplorer" />
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+  </Fragment>
+
+  <!-- Components -->
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <!-- Main Application Files -->
+      <Component Id="MainExecutable" Guid="*">
+        <File Id="RoseGlassCloudExplorer.exe" 
+              Name="RoseGlass CloudExplorer.exe" 
+              Source="$(var.SourceDir)\RoseGlass CloudExplorer.exe" 
+              KeyPath="yes" />
+        <File Id="RoseGlassCloudExplorer.exe.config" 
+              Name="RoseGlass CloudExplorer.exe.config" 
+              Source="$(var.SourceDir)\RoseGlass CloudExplorer.exe.config" />
+        <File Id="server.js" 
+              Name="server.js" 
+              Source="$(var.SourceDir)\server.js" />
+        <File Id="package.json" 
+              Name="package.json" 
+              Source="$(var.SourceDir)\package.json" />
+        
+        <!-- Services -->
+        <File Id="RcloneService.js" 
+              Name="services\RcloneService.js" 
+              Source="$(var.SourceDir)\services\RcloneService.js" />
+        <File Id="FileManager.js" 
+              Name="services\FileManager.js" 
+              Source="$(var.SourceDir)\services\FileManager.js" />
+        <File Id="TaskQueue.js" 
+              Name="services\TaskQueue.js" 
+              Source="$(var.SourceDir)\services\TaskQueue.js" />
+        <File Id="Database.js" 
+              Name="services\Database.js" 
+              Source="$(var.SourceDir)\services\Database.js" />
+        
+        <!-- Electron -->
+        <File Id="main.js" 
+              Name="electron\main.js" 
+              Source="$(var.SourceDir)\electron\main.js" />
+        <File Id="preload.js" 
+              Name="electron\preload.js" 
+              Source="$(var.SourceDir)\electron\preload.js" />
+        
+        <!-- Client Build -->
+        <File Id="index.html" 
+              Name="client\build\index.html" 
+              Source="$(var.SourceDir)\client\build\index.html" />
+        <File Id="static" 
+              Name="client\build\static" 
+              Source="$(var.SourceDir)\client\build\static" />
+        
+        <!-- Node Modules -->
+        <File Id="node_modules" 
+              Name="node_modules" 
+              Source="$(var.SourceDir)\node_modules" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- Rclone Component -->
+    <Component Id="RcloneComponent" Directory="RcloneFolder" Guid="*">
+      <File Id="rclone.exe" 
+            Name="rclone.exe" 
+            Source="$(var.SourceDir)\rclone\rclone.exe" 
+            KeyPath="yes" />
+      
+      <!-- Registry entries for Rclone -->
+      <RegistryValue Root="HKLM" 
+                     Key="Software\RoseGlass\CloudExplorer" 
+                     Name="RclonePath" 
+                     Type="string" 
+                     Value="[RcloneFolder]rclone.exe" />
+    </Component>
+
+    <!-- Desktop Shortcut -->
+    <Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="*">
+      <Shortcut Id="DesktopShortcut" 
+                Directory="DesktopFolder" 
+                Name="RoseGlass CloudExplorer" 
+                WorkingDirectory="INSTALLFOLDER" 
+                Icon="RoseGlassCloudExplorer.exe" 
+                IconIndex="0" 
+                Advertise="yes" />
+      <RemoveFolder Id="DesktopFolder" On="uninstall" />
+      <RegistryValue Root="HKCU" 
+                     Key="Software\RoseGlass\CloudExplorer" 
+                     Name="installed" 
+                     Type="integer" 
+                     Value="1" 
+                     KeyPath="yes" />
+    </Component>
+
+    <!-- Start Menu Shortcut -->
+    <Component Id="StartMenuShortcut" Directory="ProgramMenuDir" Guid="*">
+      <Shortcut Id="StartMenuShortcut" 
+                Directory="ProgramMenuDir" 
+                Name="RoseGlass CloudExplorer" 
+                WorkingDirectory="INSTALLFOLDER" 
+                Icon="RoseGlassCloudExplorer.exe" 
+                IconIndex="0" 
+                Advertise="yes" />
+      <Shortcut Id="UninstallShortcut" 
+                Directory="ProgramMenuDir" 
+                Name="Uninstall RoseGlass CloudExplorer" 
+                Icon="uninstall.exe" 
+                IconIndex="0" 
+                Advertise="yes" />
+      <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+      <RegistryValue Root="HKCU" 
+                     Key="Software\RoseGlass\CloudExplorer" 
+                     Name="installed" 
+                     Type="integer" 
+                     Value="1" 
+                     KeyPath="yes" />
+    </Component>
+  </Fragment>
+
+  <!-- Icons -->
+  <Fragment>
+    <Icon Id="icon.ico" SourceFile="icon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+  </Fragment>
+</Wix>

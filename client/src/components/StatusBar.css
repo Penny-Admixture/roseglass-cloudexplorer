@@ -1,0 +1,50 @@
+.status-bar {
+  background-color: #343a40;
+  color: white;
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  border-top: 1px solid #495057;
+}
+
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rclone-status {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.task-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.active-tasks {
+  color: #ffc107;
+  font-weight: 500;
+}
+
+.no-tasks {
+  color: #6c757d;
+}
+
+.app-version {
+  color: #adb5bd;
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+}
