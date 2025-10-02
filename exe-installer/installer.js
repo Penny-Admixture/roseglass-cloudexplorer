@@ -7,6 +7,27 @@ console.log('RoseGlass CloudExplorer Installer');
 console.log('=====================================');
 console.log('');
 
+// Check if running as administrator
+function isAdmin() {
+  try {
+    execSync('net session', { stdio: 'ignore' });
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+if (!isAdmin()) {
+  console.log('ERROR: This installer requires administrator privileges.');
+  console.log('Please right-click on this file and select "Run as administrator".');
+  console.log('');
+  console.log('Press any key to exit...');
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.on('data', process.exit.bind(process, 1));
+  return;
+}
+
 const installDir = path.join('C:', 'Program Files', 'RoseGlass', 'CloudExplorer');
 const desktopDir = path.join(os.homedir(), 'Desktop');
 const startMenuDir = path.join(os.homedir(), 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu', 'Programs');
@@ -45,6 +66,12 @@ try {
   process.stdin.on('data', process.exit.bind(process, 0));
 } catch (error) {
   console.error('Installation failed:', error.message);
+  console.log('');
+  console.log('If you see permission errors, please:');
+  console.log('1. Right-click on this installer');
+  console.log('2. Select "Run as administrator"');
+  console.log('3. Try again');
+  console.log('');
   console.log('Press any key to exit...');
   process.stdin.setRawMode(true);
   process.stdin.resume();
