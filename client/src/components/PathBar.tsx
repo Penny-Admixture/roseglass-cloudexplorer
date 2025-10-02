@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import * as path from 'path';
 import './PathBar.css';
 
 interface PathBarProps {
@@ -46,8 +45,9 @@ const PathBar: React.FC<PathBarProps> = ({ path: currentPath, onPathChange, remo
       }
     } else {
       // For local paths, go up one directory
-      const parentPath = path.dirname(currentPath);
-      if (parentPath !== currentPath) {
+      const lastSlash = currentPath.lastIndexOf('\\');
+      const parentPath = lastSlash > 0 ? currentPath.substring(0, lastSlash) : currentPath.substring(0, currentPath.lastIndexOf('/'));
+      if (parentPath !== currentPath && parentPath.length > 0) {
         onPathChange(parentPath);
       }
     }
@@ -57,7 +57,9 @@ const PathBar: React.FC<PathBarProps> = ({ path: currentPath, onPathChange, remo
     if (remote) {
       return currentPath !== '' && currentPath !== '/';
     } else {
-      return path.dirname(currentPath) !== currentPath;
+      const lastSlash = currentPath.lastIndexOf('\\');
+      const parentPath = lastSlash > 0 ? currentPath.substring(0, lastSlash) : currentPath.substring(0, currentPath.lastIndexOf('/'));
+      return parentPath !== currentPath && parentPath.length > 0;
     }
   };
 
