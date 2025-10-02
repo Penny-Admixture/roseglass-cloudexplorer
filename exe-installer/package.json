@@ -6,6 +6,9 @@
   "bin": "installer.js",
   "pkg": {
     "targets": ["node18-win-x64"],
-    "outputPath": "dist"
+    "outputPath": "dist",
+    "assets": [
+      "RoseGlassCloudExplorer/**/*"
+    ]
   }
 }
