@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"> 
+  <Product Id="*" Name="RoseGlass CloudExplorer" Language="1033" Version="1.0.0.0" Manufacturer="RoseGlass" UpgradeCode="PUT-GUID-HERE"> 
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" /> 
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." /> 
+    <MediaTemplate EmbedCab="yes" /> 
+    <Feature Id="ProductFeature" Title="RoseGlass CloudExplorer" Level="1"> 
+      <ComponentGroupRef Id="ProductComponents" /> 
+    </Feature> 
+  </Product> 
+  <Fragment> 
+    <Directory Id="TARGETDIR" Name="SourceDir"> 
+      <Directory Id="ProgramFiles64Folder"> 
+        <Directory Id="INSTALLFOLDER" Name="RoseGlass CloudExplorer"> 
+        </Directory> 
+      </Directory> 
+    </Directory> 
+  </Fragment> 
+  <Fragment> 
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER"> 
+      <Component Id="MainExecutable" Guid="*"> 
+        <File Id="ServerJS" Name="server.js" Source="server.js" KeyPath="yes" /> 
+        <File Id="PackageJSON" Name="package.json" Source="package.json" /> 
+        <File Id="RcloneExe" Name="rclone.exe" Source="rclone\rclone.exe" /> 
+      </Component> 
+    </ComponentGroup> 
+  </Fragment> 
+</Wix> 
